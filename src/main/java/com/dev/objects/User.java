@@ -17,14 +17,17 @@ public class User {
 
     @Column
     private String token;
+    @Column
+    private String email;
 
 
     public User() {
     }
 
-    public User(String username, String token) {
+    public User(String username, String token,String email) {
         this.username = username;
         this.token = token;
+        this.email=email;
     }
 
     public int getId() {
@@ -51,5 +54,11 @@ public class User {
         this.token = token;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

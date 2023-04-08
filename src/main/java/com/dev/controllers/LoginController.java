@@ -23,7 +23,7 @@ public class LoginController {
     private Persist persist;
 
     @RequestMapping(value = "sign-up")
-    public BasicResponse signUp (String username, String password) {
+    public BasicResponse signUp (String username, String password,String email) {
         BasicResponse basicResponse = new BasicResponse();
         boolean success = false;
         Integer errorCode = null;
@@ -32,7 +32,7 @@ public class LoginController {
                 if (utils.isStrongPassword(password)) {
                     User fromDb = persist.getUserByUsername(username);
                     if (fromDb == null) {
-                        User toAdd = new User(username, utils.createHash(username, password));
+                        User toAdd = new User(username, utils.createHash(username, password),email);
                         persist.saveUser(toAdd);
                         success = true;
                     } else {
@@ -65,7 +65,7 @@ public class LoginController {
                     success = true;
                     basicResponse = new LoginResponse(token);
                 } else {
-                    errorCode = ERROR_WRONG_LOGIN_CREDS;
+                    errorCode = ERROR_WRONG_LOGIN_DETAILS;
                 }
             } else {
                 errorCode = ERROR_MISSING_PASSWORD;
