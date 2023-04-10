@@ -66,6 +66,18 @@ public class Persist {
         session.close();
         return user;
     }
+    public String getUsernameByToke(String token){
+      String username=null;
+        Session session = sessionFactory.openSession();
+        User user = (User) session.createQuery("From User WHERE token = :token")
+                .setParameter("token", token)
+                .uniqueResult();
+        session.close();
+    if (user!=null){
+        username=user.getUsername();
+    }
+    return username;
+    }
 
 
 

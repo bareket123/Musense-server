@@ -83,6 +83,11 @@ public class LoginController {
         return persist.getAllUsers().size();
     }
 
+    @RequestMapping(value = "get-username-by-token" , method = RequestMethod.GET)
+    public String getUsernameByToken(String token){
+        return persist.getUsernameByToke(token);
+    }
+
 
 
 
