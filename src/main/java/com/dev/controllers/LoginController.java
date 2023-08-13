@@ -1,5 +1,6 @@
 package com.dev.controllers;
 
+import com.dev.Models.UserDetailsModel;
 import com.dev.objects.User;
 import com.dev.responses.BasicResponse;
 import com.dev.responses.LoginResponse;
@@ -9,7 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.dev.utils.Constants.EVENT_ADDED_NEW_OFFER;
+import static com.dev.utils.Constants.MINUTE;
 import static com.dev.utils.Errors.*;
 
 @RestController
@@ -19,12 +26,11 @@ public class LoginController {
     @Autowired
     private Utils utils;
 
-    //test
     @Autowired
     private Persist persist;
 
     @RequestMapping(value = "sign-up")
-    public BasicResponse signUp (String username, String password,String email) {
+    public BasicResponse signUp (String username, String password,String email,String picture) {
         BasicResponse basicResponse = new BasicResponse();
         boolean success = false;
         Integer errorCode = null;
@@ -33,7 +39,7 @@ public class LoginController {
                 if (utils.isStrongPassword(password)) {
                     User fromDb = persist.getUserByUsername(username);
                     if (fromDb == null) {
-                        User toAdd = new User(username, utils.createHash(username, password),email);
+                     User toAdd=new User(username,utils.createHash(username,password),email,picture);
                         persist.saveUser(toAdd);
                         success = true;
                     } else {
@@ -82,11 +88,13 @@ public class LoginController {
       public int getUsersSize(){
         return persist.getAllUsers().size();
     }
-
-    @RequestMapping(value = "get-username-by-token" , method = RequestMethod.GET)
-    public String getUsernameByToken(String token){
+    @RequestMapping(value = "get-user-details-by-token" , method = RequestMethod.GET)
+    public UserDetailsModel getUsernameByToken(String token){
         return persist.getUsernameByToke(token);
     }
+
+
+
 
 
 

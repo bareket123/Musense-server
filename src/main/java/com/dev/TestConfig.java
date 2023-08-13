@@ -2,6 +2,7 @@ package com.dev;
 
 import com.dev.objects.Song;
 import com.dev.objects.User;
+import com.dev.objects.UserConnection;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
@@ -49,6 +50,8 @@ public class TestConfig {
         }
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Song.class);
+        configuration.addAnnotatedClass(UserConnection.class);
+
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
         return configuration.buildSessionFactory(serviceRegistry);
