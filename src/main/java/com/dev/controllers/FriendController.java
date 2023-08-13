@@ -53,9 +53,6 @@ public class FriendController {
 //    }
 
 
-    @PostMapping("/acceptRequest")
-    public ResponseEntity<UserConnection> sendFriendRequest(){
-        UserConnection connection=connectionService.sendFriendRequest(requestDTO.getUserId(),requestDTO.getFriendId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(connection);
-    }
+
+
 }
