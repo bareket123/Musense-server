@@ -7,7 +7,6 @@ import com.dev.responses.LoginResponse;
 import com.dev.utils.Persist;
 import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +28,6 @@ public class LoginController {
 
     @Autowired
     private Persist persist;
-
-    @Qualifier("entityManagerFactory")
-    @Autowired
-    private Object object;
 
     @RequestMapping(value = "sign-up")
     public BasicResponse signUp (String username, String password,String email,String picture) {
