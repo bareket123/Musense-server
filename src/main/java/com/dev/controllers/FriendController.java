@@ -21,6 +21,7 @@ public class FriendController {
     @Autowired
     Persist persist;
 
+    //search friends
     @RequestMapping(value = "search-by-user-username")
     public BasicResponse getUserByUsername(String username){
         BasicResponse basicResponse;
