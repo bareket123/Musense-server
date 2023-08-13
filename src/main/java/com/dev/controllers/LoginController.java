@@ -30,9 +30,6 @@ public class LoginController {
     @Autowired
     private Persist persist;
 
-    @Qualifier("entityManagerFactory")
-    @Autowired
-    private Object object;
 
     @RequestMapping(value = "sign-up")
     public BasicResponse signUp (String username, String password,String email,String picture) {
