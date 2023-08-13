@@ -14,4 +14,5 @@ public class Constants {
     public static final double NOT_VALID_OFFER =0;
     public static final int TIME_OR_DATE_DIFFERENCE =0;
 
+
 }
