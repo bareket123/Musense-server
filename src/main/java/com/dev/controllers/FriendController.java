@@ -3,17 +3,16 @@ package com.dev.controllers;
 import com.dev.Models.FriendsDetailsModel;
 import com.dev.objects.User;
 import com.dev.objects.UserConnection;
-import com.dev.objects.UserConnectionService;
 import com.dev.responses.BasicResponse;
+import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.SearchFriendResponse;
 import com.dev.utils.Errors;
 import com.dev.utils.Persist;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Basic;
+import java.util.List;
+
 @RestController
 public class FriendController {
 //    @Autowired
@@ -33,25 +32,45 @@ public class FriendController {
       }
       return basicResponse;
     }
-//
-//    @PostMapping("/sendRequest")
-//    public ResponseEntity<UserConnection> sendFriendRequest() {
-//        UserConnection connection = connectionService.sendFriendRequest(requestDTO.getUserId(), requestDTO.getFriendId());
-//        return ResponseEntity.status(HttpStatus.CREATED).body(connection);
-//    }
-//
-//    @PostMapping("/acceptRequest")
-//    public ResponseEntity<Void> acceptFriendRequest(@RequestParam Long connectionId) {
-//        connectionService.acceptFriendRequest(connectionId);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    @PostMapping("/declineRequest")
-//    public ResponseEntity<Void> declineFriendRequest(@RequestParam Long connectionId) {
-//        connectionService.declineFriendRequest(connectionId);
-//        return ResponseEntity.ok().build();
-//    }
+    @RequestMapping(value = "follow-friend")
+    public BasicResponse createAFriendFollowingRequest(String token,String friendUsername){
+        BasicResponse basicResponse;
+        User user=persist.getUserByToken(token);
+        User friend=persist.getUserByUsername(friendUsername);
+        if (user!=null){
+            if (friend!=null){
+                persist.createAFriendRequest(user,friend);
+                basicResponse=new BasicResponse(true,null);
+            }else {
+                basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_FRIEND);
+            }
+
+        }else {
+            basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+        }
+
+
+     return basicResponse;
+    }
+    @RequestMapping(value = "get-my-friends")
+    public BasicResponse getMyFriends(String token){
+        BasicResponse basicResponse;
+        List<User> allMyFriends=null;
+        User user=persist.getUserByToken(token);
+        if (user!=null){
+         allMyFriends =persist.getMyFriends(user);
+         basicResponse=new GetFriendsResponse(true,null,allMyFriends);
+         }else {
+            basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+
+        }
+        return basicResponse;
+        }
+
+
+    }
 
 
 
-}
+
+

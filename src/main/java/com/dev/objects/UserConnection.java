@@ -17,10 +17,15 @@ public class UserConnection {
     @JoinColumn(name = "friend_id")
     private User friend;
 
-    @Enumerated(EnumType.STRING)
-    private ConnectionStatus status;
+    public UserConnection( User user, User friend) {
 
+        this.user = user;
+        this.friend = friend;
+    }
 
+    public UserConnection() {
+
+    }
 
     public User getUser() {
         return user;
@@ -38,12 +43,6 @@ public class UserConnection {
         this.friend = friend;
     }
 
-    public ConnectionStatus getStatus() {
-        return status;
-    }
 
-    public void setStatus(ConnectionStatus status) {
-        this.status = status;
-    }
 
 }
