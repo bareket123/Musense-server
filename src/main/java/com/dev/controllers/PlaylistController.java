@@ -5,6 +5,7 @@ import com.dev.objects.User;
 import com.dev.responses.BasicResponse;
 import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.GetPlaylistResponse;
+import com.dev.responses.PlaylistByFriendsResponse;
 import com.dev.utils.Errors;
 import com.dev.utils.Persist;
 import org.hibernate.Session;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,10 +29,6 @@ public class PlaylistController {
       BasicResponse basicResponse;
         User user=persist.getUserByToken(token);
         if (user!=null){
-            System.out.println("title=" +title);
-            System.out.println("artist=" +artist);
-            System.out.println("url=" +url);
-            System.out.println("cover=" +coverImage);
           if (title!=null & artist!=null&url!=null&coverImage!=null){
               Song songToAdd=new Song(title,artist,url,coverImage,user);
               persist.addToSong(songToAdd);
@@ -78,5 +76,25 @@ public class PlaylistController {
 
       return basicResponse;
     }
+    @RequestMapping(value = "get-friends-playlist")
+    public BasicResponse getPlaylistByFriends(String token){
+      List<Song> playlistByFriends=new ArrayList<>();
+      BasicResponse basicResponse;
+      User user=persist.getUserByToken(token);
+      if (user!=null){
+          List<User> myFriends=persist.getMyFriends(user);
+          for (User friend: myFriends) {
+              List<Song>playlistByCurrentFriend=persist.getUserPlaylist(friend);
+                  assert playlistByCurrentFriend!=null;
+                  playlistByFriends.addAll(playlistByCurrentFriend);
+          }
+          basicResponse=new PlaylistByFriendsResponse(true,null,playlistByFriends);
+      }else {
+          basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+      }
+
+           return basicResponse;
+    }
+
 
 }
