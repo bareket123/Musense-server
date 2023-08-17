@@ -1,9 +1,11 @@
 package com.dev.objects;
 
 import com.dev.utils.Constants;
+import org.hibernate.annotations.ManyToAny;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table (name = "users")
@@ -23,11 +25,13 @@ public class User {
     private String email;
 
 
-    public User(String username, String token,String email,String pictureLink) {
+
+    public User(String username, String token,String email,String picture) {
         this.username = username;
         this.token = token;
         this.email=email;
-        this.picture=pictureLink;
+        this.picture=picture;
+
     }
 
     public User() {
@@ -73,4 +77,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+
 }

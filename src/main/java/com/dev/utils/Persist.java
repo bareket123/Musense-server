@@ -2,10 +2,12 @@
 package com.dev.utils;
 
 import com.dev.Models.UserDetailsModel;
+import com.dev.objects.Song;
 import com.dev.objects.User;
 import com.dev.objects.UserConnection;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +20,10 @@ public class Persist {
     private final SessionFactory sessionFactory;
 
     @Autowired
-    public Persist (SessionFactory sf) {
+    public Persist(SessionFactory sf) {
         this.sessionFactory = sf;
     }
+
     public User getUserByUsername(String username) {
         User found;
         Session session = sessionFactory.openSession();
@@ -65,25 +68,27 @@ public class Persist {
         session.close();
         return user;
     }
-    public UserDetailsModel getUsernameByToke(String token){
-        UserDetailsModel userDetailsModel=null;
+
+    public UserDetailsModel getUsernameByToke(String token) {
+        UserDetailsModel userDetailsModel = null;
         Session session = sessionFactory.openSession();
         User user = (User) session.createQuery("From User WHERE token = :token")
                 .setParameter("token", token)
                 .uniqueResult();
         session.close();
-    if (user!=null){
-         userDetailsModel=new UserDetailsModel(user);
-    }
-    return userDetailsModel;
+        if (user != null) {
+            userDetailsModel = new UserDetailsModel(user);
+        }
+        return userDetailsModel;
     }
 
-    public void createAFriendRequest(User user , User friend){
+    public void createAFriendRequest(User user, User friend) {
         Session session = sessionFactory.openSession();
-        UserConnection newConnection=new UserConnection(user,friend);
-       session.save(newConnection);
-       session.close();
+        UserConnection newConnection = new UserConnection(user, friend);
+        session.save(newConnection);
+        session.close();
     }
+
     public List<UserConnection> followingRequestByUser(User user) {
         Session session = sessionFactory.openSession();
 
@@ -91,38 +96,50 @@ public class Persist {
                 .createQuery("FROM UserConnection WHERE user = :user")
                 .setParameter("user", user)
                 .list();
-             session.close();
+        session.close();
         return followingRequestByUsers;
     }
-    public List<User> getMyFriends(User user){
-        List<User> allMyFriends=new ArrayList<>();
-        List<UserConnection> allFollowingFriendsRequest=followingRequestByUser(user);
-        for (UserConnection userConnection :allFollowingFriendsRequest) {
+
+    public List<User> getMyFriends(User user) {
+        List<User> allMyFriends = new ArrayList<>();
+        List<UserConnection> allFollowingFriendsRequest = followingRequestByUser(user);
+        for (UserConnection userConnection : allFollowingFriendsRequest) {
             allMyFriends.add(userConnection.getFriend());
 
         }
 
-     return allMyFriends;
+        return allMyFriends;
     }
 
 
 
+    public void addToSong(Song song) {
+        Session session = sessionFactory.openSession();
+        session.save(song);
+        session.close();
+    }
 
+    public List<Song> getUserPlaylist(User user){
+        Session session= sessionFactory.openSession();
+        List<Song>  playlistByUser= session.createQuery("from Song where user= :user").setParameter("user",user).list();
+        session.close();
+        return playlistByUser;
+    }
+    public void deleteSong(Song song){
+        Session session=sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(song);
+        transaction.commit();
+        session.close();
+    }
 
+    public Song getSongById(int id){
+        Session session=sessionFactory.openSession();
+        Song song= (Song) session.createQuery("from Song where id= :id").setParameter("id",id).uniqueResult();
+        session.close();
+        return song;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 

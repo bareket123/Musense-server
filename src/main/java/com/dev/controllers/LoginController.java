@@ -16,8 +16,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dev.utils.Constants.EVENT_ADDED_NEW_OFFER;
-import static com.dev.utils.Constants.MINUTE;
+
 import static com.dev.utils.Errors.*;
 
 @RestController

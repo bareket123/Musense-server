@@ -15,10 +15,11 @@ import java.util.List;
 
 @RestController
 public class FriendController {
-//    @Autowired
-//    private UserConnectionService connectionService;
+
     @Autowired
     Persist persist;
+
+
 
     @RequestMapping(value = "search-by-user-username")
     public BasicResponse getUserByUsername(String username){

@@ -9,33 +9,48 @@ public class Song {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private int id;
-
     @Column
-    private String name;
+    private String title;
     @Column
-    private String dateOfPublication;
-
+    private String artist;
     @Column
-    private String genre;
-
+    private String url;
     @Column
-    private int popularityDimension;
+    private String coverImage;
 
-    @Column
-    private String singer;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    public Song(String name, String dateOfPublication, String genre, int popularityDimension, String singer) {
-        this.name = name;
-        this.dateOfPublication = dateOfPublication;
-        this.genre = genre;
-        this.popularityDimension = popularityDimension;
-        this.singer = singer;
+    public Song(String title, String artist, String url, String coverImage,User user) {
+
+        this.title = title;
+        this.artist = artist;
+        this.url = url;
+        this.coverImage = coverImage;
+        this.user=user;
+
     }
 
     public Song() {
 
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
+    }
 
     public int getId() {
         return id;
@@ -45,43 +60,19 @@ public class Song {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String name) {
+        this.title = name;
     }
 
-    public String getDateOfPublication() {
-        return dateOfPublication;
+    public String getArtist() {
+        return artist;
     }
 
-    public void setDateOfPublication(String dateOfPublication) {
-        this.dateOfPublication = dateOfPublication;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getPopularityDimension() {
-        return popularityDimension;
-    }
-
-    public void setPopularityDimension(int popularityDimension) {
-        this.popularityDimension = popularityDimension;
-    }
-
-    public String getSinger() {
-        return singer;
-    }
-
-    public void setSinger(String singer) {
-        this.singer = singer;
+    public void setArtist(String singer) {
+        this.artist = singer;
     }
 }
