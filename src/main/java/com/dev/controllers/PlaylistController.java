@@ -2,13 +2,9 @@ package com.dev.controllers;
 
 import com.dev.objects.Song;
 import com.dev.objects.User;
-import com.dev.responses.BasicResponse;
-import com.dev.responses.GetFriendsResponse;
-import com.dev.responses.GetPlaylistResponse;
-import com.dev.responses.PlaylistByFriendsResponse;
+import com.dev.responses.*;
 import com.dev.utils.Errors;
 import com.dev.utils.Persist;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +18,8 @@ import java.util.List;
 public class PlaylistController {
   @Autowired
     Persist persist;
+  @Autowired
+  LiveUpdateController liveUpdateController;
 
 
   @RequestMapping(value = {"add-song"})
@@ -39,7 +37,7 @@ public class PlaylistController {
           }
 
         }else {
-            basicResponse=new BasicResponse(false, Errors.ERROR_NOT_FOUND_USER);
+            basicResponse=new BasicResponse(false, Errors.ERROR_USER_NOT_FOUND);
         }
 
       return basicResponse;
@@ -57,12 +55,12 @@ public class PlaylistController {
            basicResponse=new BasicResponse(false,Errors.ERROR_PLAYLIST_NOT_EXIST);
        }
       }else{
-          basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
       }
       return basicResponse;
     }
 
-    //לשנות לפי id
+
     @RequestMapping(value = {"delete-song"})
     public BasicResponse deleteSongFromPlaylist(int songId){
       BasicResponse basicResponse;
@@ -70,6 +68,7 @@ public class PlaylistController {
       if (song!=null){
           persist.deleteSong(song);
           basicResponse=new BasicResponse(true,null);
+
       }else {
           basicResponse=new BasicResponse(false,Errors.ERROR_WRONG_SONG_DETAILS);
       }
@@ -90,11 +89,48 @@ public class PlaylistController {
           }
           basicResponse=new PlaylistByFriendsResponse(true,null,playlistByFriends);
       }else {
-          basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
       }
 
            return basicResponse;
     }
 
+    @RequestMapping(value = "get-love-artist")
+    public BasicResponse getArtists(String userToken){
+      BasicResponse basicResponse;
+      User user=persist.getUserByToken(userToken);
+      if (user!=null){
+          List<String> artists=persist.artistUserHas(user);
+          if (artists.size()>0){
+              basicResponse=new ArtistResponse(true,null,artists);
+          }else {
+              basicResponse=new BasicResponse(false,Errors.ERROR_PLAYLIST_NOT_EXIST);
+          }
+      }else {
+          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
+      }
+      return basicResponse;
+    }
+    @RequestMapping(value = "is-song-exist")
+    public boolean isSongExist(int songId,String token) {
+        Song song = persist.getSongById(songId);
+        boolean exist = false;
+        if (song != null) {
+            System.out.println("the song is: " + song.getTitle() + " " + song.getArtist());
+            User user = persist.getUserByToken(token);
+            if (user != null) {
+                System.out.println("user is: " + user.getUsername());
+                List<Song> playlist = persist.getUserPlaylist(user);
+                for (Song current : playlist) {
+                    if (current.getId() == song.getId()) {
+                        exist = true;
+                        break;
+                    }
+                }
 
+            }
+
+        }
+        return exist;
+    }
 }

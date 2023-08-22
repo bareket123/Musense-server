@@ -2,7 +2,6 @@ package com.dev.controllers;
 
 import com.dev.Models.FriendsDetailsModel;
 import com.dev.objects.User;
-import com.dev.objects.UserConnection;
 import com.dev.responses.BasicResponse;
 import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.SearchFriendResponse;
@@ -29,7 +28,7 @@ public class FriendController {
           FriendsDetailsModel friendsDetailsModel=new FriendsDetailsModel(foundUser);
            basicResponse=new SearchFriendResponse(true,null,friendsDetailsModel);
       }else {
-           basicResponse=new BasicResponse(false, Errors.ERROR_NOT_FOUND_USER);
+           basicResponse=new BasicResponse(false, Errors.ERROR_USER_NOT_FOUND);
       }
       return basicResponse;
     }
@@ -47,7 +46,7 @@ public class FriendController {
             }
 
         }else {
-            basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+            basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
         }
 
 
@@ -62,7 +61,7 @@ public class FriendController {
          allMyFriends =persist.getMyFriends(user);
          basicResponse=new GetFriendsResponse(true,null,allMyFriends);
          }else {
-            basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_USER);
+            basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
 
         }
         return basicResponse;

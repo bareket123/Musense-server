@@ -5,6 +5,7 @@ import com.dev.Models.UserDetailsModel;
 import com.dev.objects.Song;
 import com.dev.objects.User;
 import com.dev.objects.UserConnection;
+import com.dev.objects.UserPreferences;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -140,7 +141,31 @@ public class Persist {
         return song;
 
     }
+public List<String> artistUserHas(User user){
+        List<String> artists=new ArrayList<>();
+        List<Song> playlist=getUserPlaylist(user);
+        if (playlist!=null){
+            for (Song song:playlist) {
+                if (!artists.contains(song.getArtist())){
+                    artists.add(song.getArtist());
+                }
+            }
+        }
 
+ return artists;
+
+}
+public void addUserPreferences(UserPreferences userPreferences){
+        Session session= sessionFactory.openSession();
+        session.save(userPreferences);
+        session.close();
+}
+public UserPreferences getUserPreferences(User user){
+        Session session= sessionFactory.openSession();
+        UserPreferences userPreferences=(UserPreferences) session.createQuery("from UserPreferences where user= :user").setParameter("user",user).uniqueResult();
+        session.close();
+        return userPreferences;
+}
 
 
 
