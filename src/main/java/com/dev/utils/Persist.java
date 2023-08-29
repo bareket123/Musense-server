@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class Persist {
@@ -61,6 +63,13 @@ public class Persist {
         return allUsers;
     }
 
+    public List<User> getAllUsersWithoutCurrentUser(String token) {
+        Session session = sessionFactory.openSession();
+        List<User> allUsers = session.createQuery("FROM User ").list();
+        session.close();
+        List<User> users= allUsers.stream().filter((user -> !Objects.equals(user.getToken(), token))).collect(Collectors.toList());
+        return users;
+    }
     public User getUserByToken(String token) {
         Session session = sessionFactory.openSession();
         User user = (User) session.createQuery("From User WHERE token = :token")

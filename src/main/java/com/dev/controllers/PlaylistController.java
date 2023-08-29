@@ -18,8 +18,8 @@ import java.util.List;
 public class PlaylistController {
   @Autowired
     Persist persist;
-  @Autowired
-  LiveUpdateController liveUpdateController;
+//  @Autowired
+//  LiveUpdateController liveUpdateController;
 
 
   @RequestMapping(value = {"add-song"})

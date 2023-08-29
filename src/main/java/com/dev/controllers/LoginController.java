@@ -1,9 +1,13 @@
 package com.dev.controllers;
 
+import com.dev.Models.FriendsDetailsModel;
 import com.dev.Models.UserDetailsModel;
 import com.dev.objects.User;
 import com.dev.responses.BasicResponse;
+import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.LoginResponse;
+import com.dev.responses.SearchFriendResponse;
+import com.dev.utils.Errors;
 import com.dev.utils.Persist;
 import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -94,11 +99,25 @@ public class LoginController {
         return persist.getUsernameByToke(token);
     }
 
-
-
-
-
-
-
-
+    @RequestMapping(value = "get-user-picture-by-token" , method = RequestMethod.GET)
+    public String getUserPicByToken(String token){
+        return persist.getUsernameByToke(token).getPicture();
+    }
+    @RequestMapping(value = "get-all-Users-without-current")
+    public BasicResponse getAllUsersWithoutCurrentUser(String token){
+        List <User> users;
+        BasicResponse basicResponse;
+        User currentUser=persist.getUserByToken(token);
+        if (currentUser!=null){
+            users=persist.getAllUsersWithoutCurrentUser(token);
+            basicResponse= new GetFriendsResponse(true,null,users);
+        }else {
+            basicResponse=new BasicResponse(false, Errors.ERROR_USER_NOT_FOUND);
+        }
+        return basicResponse;
+    }
 }
+
+
+
+

@@ -18,6 +18,8 @@ public class GetFriendsResponse extends BasicResponse {
       this.myFriends= convertUsersToFriendModels(myFriends);
     }
 
+
+
     public List<FriendsDetailsModel> getMyFriends() {
         return myFriends;
     }
