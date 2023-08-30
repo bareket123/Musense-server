@@ -142,7 +142,13 @@ public class Persist {
         transaction.commit();
         session.close();
     }
-
+    public void deleteConnection(UserConnection userConnection){
+        Session session=sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(userConnection);
+        transaction.commit();
+        session.close();
+    }
     public Song getSongById(int id){
         Session session=sessionFactory.openSession();
         Song song= (Song) session.createQuery("from Song where id= :id").setParameter("id",id).uniqueResult();
@@ -174,6 +180,13 @@ public UserPreferences getUserPreferences(User user){
         UserPreferences userPreferences=(UserPreferences) session.createQuery("from UserPreferences where user= :user").setParameter("user",user).uniqueResult();
         session.close();
         return userPreferences;
+}
+public UserConnection getConnection(User user,User friend){
+    Session session= sessionFactory.openSession();
+    UserConnection userConnection = (UserConnection) session.createQuery("FROM UserConnection where user= :user And friend= :friend").setParameter("user",user).
+            setParameter("friend",friend).uniqueResult();
+    session.close();
+    return userConnection;
 }
 
 

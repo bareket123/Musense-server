@@ -2,6 +2,7 @@ package com.dev.controllers;
 
 import com.dev.Models.FriendsDetailsModel;
 import com.dev.objects.User;
+import com.dev.objects.UserConnection;
 import com.dev.responses.BasicResponse;
 import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.SearchFriendResponse;
@@ -17,6 +18,8 @@ public class FriendController {
 
     @Autowired
     Persist persist;
+    @Autowired
+    LiveUpdateController liveUpdateController;
 
 
 
@@ -40,6 +43,7 @@ public class FriendController {
         if (user!=null){
             if (friend!=null){
                 persist.createAFriendRequest(user,friend);
+                liveUpdateController.notifyFriend(token,friendUsername);
                 basicResponse=new BasicResponse(true,null);
             }else {
                 basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_FRIEND);
@@ -48,8 +52,6 @@ public class FriendController {
         }else {
             basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
         }
-
-
      return basicResponse;
     }
     @RequestMapping(value = "get-my-friends")
@@ -68,11 +70,30 @@ public class FriendController {
         }
 
 
+   @RequestMapping(value = "delete-friend")
+    public BasicResponse deleteFriend(String token ,String friendUsername){
+     BasicResponse basicResponse;
+     User friendToDelete=persist.getUserByUsername(friendUsername);
+     User user=persist.getUserByToken(token);
+     if (user!=null&&friendToDelete!=null){
+         UserConnection userConnection=persist.getConnection(user,friendToDelete);
+         if (userConnection!=null){
+             persist.deleteConnection(userConnection);
+             basicResponse=new BasicResponse(true,null);
+         }else {
+             basicResponse=new BasicResponse(false,Errors.ERROR_NO_SUCH_CONNECTION);
+         }
+     }else {
+         basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
+     }
 
+     return basicResponse;
+    }
 
 
 
     }
+
 
 
 

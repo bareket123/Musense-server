@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 @RestController
@@ -81,12 +82,19 @@ public class PlaylistController {
       BasicResponse basicResponse;
       User user=persist.getUserByToken(token);
       if (user!=null){
+          Set<String> uniqueSongs = new HashSet<>();
           List<User> myFriends=persist.getMyFriends(user);
-          for (User friend: myFriends) {
-              List<Song>playlistByCurrentFriend=persist.getUserPlaylist(friend);
-                  assert playlistByCurrentFriend!=null;
-                  playlistByFriends.addAll(playlistByCurrentFriend);
+          for (User friend : myFriends) {
+              List<Song> playlistByCurrentFriend = persist.getUserPlaylist(friend);
+              assert playlistByCurrentFriend != null;
+              for (Song song : playlistByCurrentFriend) {
+                  if (!uniqueSongs.contains(song.getUrl())) {
+                      playlistByFriends.add(song);
+                      uniqueSongs.add(song.getUrl());
+                  }
+              }
           }
+
           basicResponse=new PlaylistByFriendsResponse(true,null,playlistByFriends);
       }else {
           basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
@@ -133,4 +141,5 @@ public class PlaylistController {
         }
         return exist;
     }
+
 }
