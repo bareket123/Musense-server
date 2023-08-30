@@ -12,11 +12,16 @@ import com.dev.utils.Persist;
 import com.dev.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +41,7 @@ public class LoginController {
 
 
     @RequestMapping(value = "sign-up")
-    public BasicResponse signUp (String username, String password,String email,String picture) {
+    public BasicResponse signUp (String username, String password,String email,String imageUrl) {
         BasicResponse basicResponse = new BasicResponse();
         boolean success = false;
         Integer errorCode = null;
@@ -45,7 +50,7 @@ public class LoginController {
                 if (utils.isStrongPassword(password)) {
                     User fromDb = persist.getUserByUsername(username);
                     if (fromDb == null) {
-                     User toAdd=new User(username,utils.createHash(username,password),email,picture);
+                     User toAdd=new User(username,utils.createHash(username,password),email,imageUrl);
                         persist.saveUser(toAdd);
                         success = true;
                     } else {
@@ -64,6 +69,8 @@ public class LoginController {
         basicResponse.setErrorCode(errorCode);
         return basicResponse;
     }
+
+
 
     @RequestMapping (value = "login")
     public BasicResponse login (String username, String password) {

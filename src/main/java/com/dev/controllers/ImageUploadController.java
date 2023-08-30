@@ -1,5 +1,10 @@
 package com.dev.controllers;
 
+import com.dev.responses.BasicResponse;
+import com.dev.responses.ImageResponse;
+import com.dev.utils.Errors;
+import com.dev.utils.Persist;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +23,33 @@ public class ImageUploadController {
     @Value("${upload.dir}")
     private String uploadDir;
 
-        @PostMapping("/upload")
-        public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile imageFile) {
-            try {
-                Path filePath = Paths.get(uploadDir, imageFile.getOriginalFilename());
-                System.out.println("uploadDir: " + uploadDir); // Print the upload directory
 
-                Files.write(filePath, imageFile.getBytes());
-                System.out.println("upload");
-                return ResponseEntity.ok("Image uploaded successfully");
-            } catch (Exception e) {
-                System.out.println("failed");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed");
-            }
+
+    @PostMapping("/upload")
+    public BasicResponse uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestParam("username") String username) {
+        BasicResponse basicResponse;
+        try {
+            String originalFilename = imageFile.getOriginalFilename();
+            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String uniqueFilename = username + fileExtension;
+            Path filePath = Paths.get(uploadDir, uniqueFilename);
+            Files.write(filePath, imageFile.getBytes());
+            System.out.println("Image uploaded for user " + username + " as: " + uniqueFilename);
+            basicResponse=new ImageResponse(generateImageUrl(username));
+            basicResponse.setSuccess(true);
+        } catch (Exception e) {
+            System.out.println("Failed to upload image");
+            basicResponse=new BasicResponse(false,Errors.IMAGE_UPLOAD_FAILED);
         }
+        return basicResponse;
     }
+
+    private String generateImageUrl(String username) {
+        // Construct the image URL based on the server's base URL and the username
+        String baseUrl = "http://192.168.1.178:8989";
+        String imageRelativePath = "images/" + username + ".jpg";
+        return baseUrl + "/" + imageRelativePath;
+    }
+
+
+}
