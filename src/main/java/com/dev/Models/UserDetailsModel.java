@@ -7,6 +7,7 @@ public class UserDetailsModel {
     private String email;
     private String picture;
 
+
     public UserDetailsModel(User user){
         this.username=user.getUsername();
         this.email=user.getEmail();

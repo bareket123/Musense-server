@@ -1,6 +1,7 @@
 package com.dev.responses;
 
 import com.dev.Models.FriendsDetailsModel;
+import com.dev.Models.SearchFriendModel;
 import com.dev.objects.User;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class GetFriendsResponse extends BasicResponse {
         super(success, errorCode);
       this.myFriends= convertUsersToFriendModels(myFriends);
     }
+
 
 
 

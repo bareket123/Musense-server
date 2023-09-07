@@ -110,19 +110,7 @@ public class LoginController {
     public String getUserPicByToken(String token){
         return persist.getUsernameByToke(token).getPicture();
     }
-    @RequestMapping(value = "get-all-Users-without-current")
-    public BasicResponse getAllUsersWithoutCurrentUser(String token){
-        List <User> users;
-        BasicResponse basicResponse;
-        User currentUser=persist.getUserByToken(token);
-        if (currentUser!=null){
-            users=persist.getAllUsersWithoutCurrentUser(token);
-            basicResponse= new GetFriendsResponse(true,null,users);
-        }else {
-            basicResponse=new BasicResponse(false, Errors.ERROR_USER_NOT_FOUND);
-        }
-        return basicResponse;
-    }
+
 }
 
 

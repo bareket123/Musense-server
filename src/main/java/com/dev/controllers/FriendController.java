@@ -1,16 +1,19 @@
 package com.dev.controllers;
 
 import com.dev.Models.FriendsDetailsModel;
+import com.dev.Models.SearchFriendModel;
 import com.dev.objects.User;
 import com.dev.objects.UserConnection;
 import com.dev.responses.BasicResponse;
 import com.dev.responses.GetFriendsResponse;
 import com.dev.responses.SearchFriendResponse;
+import com.dev.responses.SearchResponse;
 import com.dev.utils.Errors;
 import com.dev.utils.Persist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -90,7 +93,25 @@ public class FriendController {
      return basicResponse;
     }
 
+    @RequestMapping(value = "get-all-Users-without-current")
+    public BasicResponse getAllUsersWithoutCurrentUser(String token){
+        List <User> users ;
+        BasicResponse basicResponse;
+        User currentUser=persist.getUserByToken(token);
+        if (currentUser!=null){
+            users=persist.getAllUsersWithoutCurrentUser(token);
+            List <SearchFriendModel> allUsers=new ArrayList<>();
+            for (User current: users) {
+                SearchFriendModel user = new SearchFriendModel(current, persist.isFollowing(current,persist.getMyFriends(currentUser)));
+                allUsers.add(user);
+         }
 
+            basicResponse= new SearchResponse(true,null,allUsers);
+        }else {
+            basicResponse=new BasicResponse(false, Errors.ERROR_USER_NOT_FOUND);
+        }
+        return basicResponse;
+    }
 
     }
 

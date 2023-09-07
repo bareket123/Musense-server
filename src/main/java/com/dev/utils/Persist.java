@@ -121,6 +121,18 @@ public class Persist {
         return allMyFriends;
     }
 
+    public boolean isFollowing ( User other,List<User> allMyFriends){
+        boolean isFollowing =false;
+        if (allMyFriends.size()!=0)
+        for (User user : allMyFriends ) {
+            if (user.getId()==other.getId()){
+                isFollowing=true;
+                break;
+            }
+        }
+        return isFollowing;
+    }
+
 
 
     public void addToSong(Song song) {
