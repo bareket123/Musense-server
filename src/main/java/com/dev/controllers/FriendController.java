@@ -64,6 +64,7 @@ public class FriendController {
         User user=persist.getUserByToken(token);
         if (user!=null){
          allMyFriends =persist.getMyFriends(user);
+
          basicResponse=new GetFriendsResponse(true,null,allMyFriends);
          }else {
             basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
