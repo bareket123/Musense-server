@@ -50,6 +50,25 @@ public class PreferencesController {
       }
      return basicResponse;
     }
+@RequestMapping("delete-answers")
+    public BasicResponse deleteUserPreferences(String token){
+        BasicResponse basicResponse;
+        User user=persist.getUserByToken(token);
+        if (user!=null){
+            UserPreferences userPreferences=persist.getUserPreferences(user);
+            if (userPreferences!=null){
+                persist.deleteUserPreferences(userPreferences);
+                basicResponse=new BasicResponse(true,null);
+            }else{
+                basicResponse=new BasicResponse(false,Errors.ERROR_WRONG_ANSWERS_DETAILS);
+            }
 
+        }else{
+            basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
+        }
+
+
+        return basicResponse;
+}
 
 }
