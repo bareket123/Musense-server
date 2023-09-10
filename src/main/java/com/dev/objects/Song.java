@@ -17,18 +17,21 @@ public class Song {
     private String url;
     @Column
     private String coverImage;
+    @Column
+    private boolean isPlayed;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Song(String title, String artist, String url, String coverImage,User user) {
+    public Song(String title, String artist, String url, String coverImage,User user,boolean isPlayed) {
 
         this.title = title;
         this.artist = artist;
         this.url = url;
         this.coverImage = coverImage;
         this.user=user;
+        this.isPlayed=isPlayed;
 
     }
 
@@ -74,5 +77,21 @@ public class Song {
 
     public void setArtist(String singer) {
         this.artist = singer;
+    }
+
+    public boolean isPlayed() {
+        return isPlayed;
+    }
+
+    public void setPlayed(boolean played) {
+        isPlayed = played;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -24,13 +24,21 @@ public class PlaylistController {
 
 
   @RequestMapping(value = {"add-song"})
-    public BasicResponse addSong(String token,String title,String artist,String url,String coverImage){
+    public BasicResponse addSong(String token,String title,String artist,String url,String coverImage,boolean isPlayed){
       BasicResponse basicResponse;
         User user=persist.getUserByToken(token);
         if (user!=null){
+
           if (title!=null & artist!=null&url!=null&coverImage!=null){
-              Song songToAdd=new Song(title,artist,url,coverImage,user);
-              persist.addToSong(songToAdd);
+              Song songToAdd=new Song(title,artist,url,coverImage,user,isPlayed);
+              List<Song> playedRecently=persist.getUserPlayedRecently(user,true);
+              if (isPlayed && playedRecently!=null){
+                    if (!isSongExistInArray(playedRecently,songToAdd)){
+                        persist.addToSong(songToAdd);
+                    }
+                }else {
+                  persist.addToSong(songToAdd);
+              }
 
               basicResponse=new BasicResponse(true,null);
           }else{
@@ -49,7 +57,7 @@ public class PlaylistController {
      BasicResponse basicResponse;
       User user=persist.getUserByToken(token);
       if (user!=null){
-       List<Song> playlist=persist.getUserPlaylist(user);
+       List<Song> playlist=persist.getUserPlaylist(user,false);
        if (playlist!=null){
            basicResponse=new GetPlaylistResponse(true,null,playlist);
        }else {
@@ -85,7 +93,7 @@ public class PlaylistController {
           Set<String> uniqueSongs = new HashSet<>();
           List<User> myFriends=persist.getMyFriends(user);
           for (User friend : myFriends) {
-              List<Song> playlistByCurrentFriend = persist.getUserPlaylist(friend);
+              List<Song> playlistByCurrentFriend = persist.getUserPlaylist(friend,false);
               assert playlistByCurrentFriend != null;
               for (Song song : playlistByCurrentFriend) {
                   if (!uniqueSongs.contains(song.getUrl())) {
@@ -103,21 +111,30 @@ public class PlaylistController {
            return basicResponse;
     }
 
-    @RequestMapping(value = "get-love-artist")
-    public BasicResponse getArtists(String userToken){
-      BasicResponse basicResponse;
-      User user=persist.getUserByToken(userToken);
-      if (user!=null){
-          List<String> artists=persist.artistUserHas(user);
-          if (artists.size()>0){
-              basicResponse=new ArtistResponse(true,null,artists);
-          }else {
-              basicResponse=new BasicResponse(false,Errors.ERROR_PLAYLIST_NOT_EXIST);
-          }
-      }else {
-          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
-      }
-      return basicResponse;
+//    @RequestMapping(value = "get-love-artist")
+//    public BasicResponse getArtists(String userToken){
+//      BasicResponse basicResponse;
+//      User user=persist.getUserByToken(userToken);
+//      if (user!=null){
+//          List<String> artists=persist.artistUserHas(user);
+//          if (artists.size()>0){
+//              basicResponse=new ArtistResponse(true,null,artists);
+//          }else {
+//              basicResponse=new BasicResponse(false,Errors.ERROR_PLAYLIST_NOT_EXIST);
+//          }
+//      }else {
+//          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
+//      }
+//      return basicResponse;
+//    }
+    private boolean isSongExistInArray(List<Song> songs, Song song){
+      boolean isExist=false;
+        for (Song currentSong:songs) {
+            if (currentSong.getUrl().equals(song.getUrl())){
+                isExist=true;
+            }
+        }
+      return isExist;
     }
     @RequestMapping(value = "is-song-exist")
     public boolean isSongExist(int songId,String token) {
@@ -128,7 +145,7 @@ public class PlaylistController {
             User user = persist.getUserByToken(token);
             if (user != null) {
                 System.out.println("user is: " + user.getUsername());
-                List<Song> playlist = persist.getUserPlaylist(user);
+                List<Song> playlist = persist.getUserPlaylist(user,false);
                 for (Song current : playlist) {
                     if (current.getId() == song.getId()) {
                         exist = true;
