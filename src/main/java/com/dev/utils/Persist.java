@@ -200,6 +200,14 @@ public UserConnection getConnection(User user,User friend){
     session.close();
     return userConnection;
 }
+public void deleteUserPreferences (UserPreferences userPreferences){
+    Session session=sessionFactory.openSession();
+    Transaction transaction = session.beginTransaction();
+    session.delete(userPreferences);
+    transaction.commit();
+    session.close();
+
+}
 
 
 
