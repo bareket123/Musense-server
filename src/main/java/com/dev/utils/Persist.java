@@ -232,6 +232,18 @@ public List<Song> getUserPlayedRecently(User user,boolean isPlayed){
         }
 
     }
+    public List<User> getUserFollowings(User user){
+        List <User> followers=new ArrayList<>();
+        Session session=sessionFactory.openSession();
+       List<UserConnection>allUserConnections=session.createQuery("FROM UserConnection where friend= :user").setParameter("user",user).list();
+       if (allUserConnections!=null){
+           for (UserConnection userConnection:allUserConnections) {
+               followers.add(userConnection.getUser());
+           }
+       }
+       session.close();
+     return followers;
+    }
 
 
 

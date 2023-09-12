@@ -4,10 +4,7 @@ import com.dev.Models.FriendsDetailsModel;
 import com.dev.Models.SearchFriendModel;
 import com.dev.objects.User;
 import com.dev.objects.UserConnection;
-import com.dev.responses.BasicResponse;
-import com.dev.responses.GetFriendsResponse;
-import com.dev.responses.SearchFriendResponse;
-import com.dev.responses.SearchResponse;
+import com.dev.responses.*;
 import com.dev.utils.Errors;
 import com.dev.utils.Persist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +18,7 @@ public class FriendController {
 
     @Autowired
     Persist persist;
-    @Autowired
-    LiveUpdateController liveUpdateController;
+
 
 
 
@@ -46,7 +42,6 @@ public class FriendController {
         if (user!=null){
             if (friend!=null){
                 persist.createAFriendRequest(user,friend);
-                liveUpdateController.notifyFriend(token,friendUsername);
                 basicResponse=new BasicResponse(true,null);
             }else {
                 basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_FRIEND);
@@ -75,12 +70,17 @@ public class FriendController {
 
 
    @RequestMapping(value = "delete-friend")
-    public BasicResponse deleteFriend(String token ,String friendUsername){
+    public BasicResponse deleteFriend(String token ,String friendUsername,int deleteStatus){
      BasicResponse basicResponse;
+     UserConnection userConnection;
      User friendToDelete=persist.getUserByUsername(friendUsername);
      User user=persist.getUserByToken(token);
      if (user!=null&&friendToDelete!=null){
-         UserConnection userConnection=persist.getConnection(user,friendToDelete);
+         if (deleteStatus==1){
+              userConnection=persist.getConnection(user,friendToDelete);
+         }else {
+              userConnection=persist.getConnection(friendToDelete,user);
+         }
          if (userConnection!=null){
              persist.deleteConnection(userConnection);
              basicResponse=new BasicResponse(true,null);
@@ -113,6 +113,27 @@ public class FriendController {
         }
         return basicResponse;
     }
+    @RequestMapping (value = "get-followers")
+    public BasicResponse getUserFollowers(String token){
+        BasicResponse basicResponse;
+        User user=persist.getUserByToken(token);
+        if (user!=null){
+            List<User> userFollowers=persist.getUserFollowings(user);
+            if (userFollowers!=null){
+                basicResponse=new FollowersResponse(true,null,userFollowers);
+            }else {
+                basicResponse=new BasicResponse(false,Errors.ERROR_NOT_FOUND_FOLLOWERS);
+            }
+        }else {
+            basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
+        }
+
+
+
+        return basicResponse;
+    }
+
+
 
     }
 

@@ -46,7 +46,7 @@ public class ImageUploadController {
 
     private String generateImageUrl(String username) {
         // Construct the image URL based on the server's base URL and the username
-        String baseUrl = "http://192.168.1.178:8989";
+        String baseUrl = "http://10.0.0.1:8989";
         String imageRelativePath = "images/" + username + ".jpg";
         return baseUrl + "/" + imageRelativePath;
     }

@@ -19,8 +19,7 @@ import java.util.Set;
 public class PlaylistController {
   @Autowired
     Persist persist;
-//  @Autowired
-//  LiveUpdateController liveUpdateController;
+
 
 
   @RequestMapping(value = {"add-song"})
@@ -28,7 +27,6 @@ public class PlaylistController {
       BasicResponse basicResponse;
         User user=persist.getUserByToken(token);
         if (user!=null){
-
           if (title!=null & artist!=null&url!=null&coverImage!=null){
               Song songToAdd=new Song(title,artist,url,coverImage,user,isPlayed);
               List<Song> playedRecently=persist.getUserPlayedRecently(user,true);
@@ -111,25 +109,12 @@ public class PlaylistController {
            return basicResponse;
     }
 
-//    @RequestMapping(value = "get-love-artist")
-//    public BasicResponse getArtists(String userToken){
-//      BasicResponse basicResponse;
-//      User user=persist.getUserByToken(userToken);
-//      if (user!=null){
-//          List<String> artists=persist.artistUserHas(user);
-//          if (artists.size()>0){
-//              basicResponse=new ArtistResponse(true,null,artists);
-//          }else {
-//              basicResponse=new BasicResponse(false,Errors.ERROR_PLAYLIST_NOT_EXIST);
-//          }
-//      }else {
-//          basicResponse=new BasicResponse(false,Errors.ERROR_USER_NOT_FOUND);
-//      }
-//      return basicResponse;
-//    }
+
     private boolean isSongExistInArray(List<Song> songs, Song song){
       boolean isExist=false;
         for (Song currentSong:songs) {
+            System.out.println("song////////////////////////////////"+currentSong.getUrl());
+            System.out.println(song.getUrl());
             if (currentSong.getUrl().equals(song.getUrl())){
                 isExist=true;
             }

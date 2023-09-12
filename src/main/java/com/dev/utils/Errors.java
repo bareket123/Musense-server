@@ -15,6 +15,7 @@ public class Errors {
     public static final int ERROR_NO_SUCH_CONNECTION = 1011;
     public static final int IMAGE_UPLOAD_FAILED = 1012;
     public static final int ERROR_NOT_FOUND_PLAYED_RECENTLY = 1013;
+    public static final int ERROR_NOT_FOUND_FOLLOWERS= 1014;
 
 
 
