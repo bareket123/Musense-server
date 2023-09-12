@@ -141,9 +141,9 @@ public class Persist {
         session.close();
     }
 
-    public List<Song> getUserPlaylist(User user){
+    public List<Song> getUserPlaylist(User user,boolean isPlayed){
         Session session= sessionFactory.openSession();
-        List<Song>  playlistByUser= session.createQuery("from Song where user= :user").setParameter("user",user).list();
+        List<Song>  playlistByUser= session.createQuery("from Song where user= :user AND isPlayed= :isPlayed").setParameter("user",user).setParameter("isPlayed",isPlayed).list();
         session.close();
         return playlistByUser;
     }
@@ -168,20 +168,20 @@ public class Persist {
         return song;
 
     }
-public List<String> artistUserHas(User user){
-        List<String> artists=new ArrayList<>();
-        List<Song> playlist=getUserPlaylist(user);
-        if (playlist!=null){
-            for (Song song:playlist) {
-                if (!artists.contains(song.getArtist())){
-                    artists.add(song.getArtist());
-                }
-            }
-        }
-
- return artists;
-
-}
+//public List<String> artistUserHas(User user){
+//        List<String> artists=new ArrayList<>();
+//        List<Song> playlist=getUserPlaylist(user);
+//        if (playlist!=null){
+//            for (Song song:playlist) {
+//                if (!artists.contains(song.getArtist())){
+//                    artists.add(song.getArtist());
+//                }
+//            }
+//        }
+//
+// return artists;
+//
+//}
 public void addUserPreferences(UserPreferences userPreferences){
         Session session= sessionFactory.openSession();
         session.save(userPreferences);
@@ -208,6 +208,30 @@ public void deleteUserPreferences (UserPreferences userPreferences){
     session.close();
 
 }
+public List<Song> getUserPlayedRecently(User user,boolean isPlayed){
+    Session session= sessionFactory.openSession();
+    List<Song>  playedRecently= session.createQuery("from Song where user= :user AND isPlayed= :isPlayed").setParameter("user",user).setParameter("isPlayed",isPlayed).list();
+    session.close();
+    return playedRecently;
+
+}
+    public void deleteUserPlayedRecently (List<Song> playedRecently){
+        Session session=sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            for (Song song : playedRecently) {
+                session.delete(song);
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+        } finally {
+            session.close();
+        }
+
+    }
 
 
 
