@@ -39,8 +39,25 @@ public class LoginController {
     @Autowired
     private Persist persist;
 
+    @RequestMapping(value = "check-if-username-available")
+    public BasicResponse checkIfUsernameAvailable (String username) {
+        BasicResponse basicResponse = new BasicResponse();
+        User fromDb = persist.getUserByUsername(username);
+        boolean success = false;
+        Integer errorCode = null;
+        if (fromDb == null) {
+            success = true;
+        }else {
+            errorCode = ERROR_USERNAME_ALREADY_EXISTS;
 
-    @RequestMapping(value = "sign-up")
+        }
+        basicResponse.setSuccess(success);
+        basicResponse.setErrorCode(errorCode);
+        return basicResponse ;
+    }
+
+
+        @RequestMapping(value = "sign-up")
     public BasicResponse signUp (String username, String password,String email,String imageUrl) {
         BasicResponse basicResponse = new BasicResponse();
         boolean success = false;
