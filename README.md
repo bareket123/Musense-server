@@ -52,7 +52,7 @@ Install my-project with npm
 
  **Client-side:**
  
- download the [Musense-Client](https://github.com/bareket123/Musense)
+ download the [shazam Api](https://rapidapi.com/apidojo/api/shazam)
  
  run npm install 
  
