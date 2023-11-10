@@ -52,7 +52,7 @@ Install my-project with npm
 
  **Client-side:**
  
- download the (Musense-Client)[https://github.com/bareket123/Musense] 
+ download the [Musense-Client](https://github.com/bareket123/Musense)
  
  run npm install 
  
